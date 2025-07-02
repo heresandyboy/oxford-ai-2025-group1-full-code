@@ -2,14 +2,15 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional, Union
 from enum import Enum
+from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ProductCategory(str, Enum):
     """Product categories for inventory classification."""
+
     HAIRCARE = "haircare"
     SKINCARE = "skincare"
     COSMETICS = "cosmetics"
@@ -17,6 +18,7 @@ class ProductCategory(str, Enum):
 
 class TransportationMode(str, Enum):
     """Available transportation modes for shipping."""
+
     ROAD = "Road"
     AIR = "Air"
     SEA = "Sea"
@@ -25,6 +27,7 @@ class TransportationMode(str, Enum):
 
 class InspectionResult(str, Enum):
     """Quality inspection results."""
+
     PASS = "Pass"
     FAIL = "Fail"
     PENDING = "Pending"
@@ -32,6 +35,7 @@ class InspectionResult(str, Enum):
 
 class Priority(str, Enum):
     """Priority levels for restocking orders."""
+
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
     LOW = "LOW"
@@ -69,7 +73,7 @@ class InventoryItem:
 
     # Core identification
     item_id: str  # SKU
-    name: str     # Product type + "_product"
+    name: str  # Product type + "_product"
     category: ProductCategory
 
     # Inventory levels
@@ -104,7 +108,7 @@ class InventoryItem:
     reorder_threshold: Optional[int] = None  # Will be calculated
     last_restocked: Optional[datetime] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post-initialization validation and calculations."""
         # Calculate reorder threshold if not provided (20% of order quantity)
         if self.reorder_threshold is None:
@@ -137,7 +141,7 @@ class InventoryItem:
     def days_of_stock(self) -> float:
         """Calculate how many days of stock remain at current demand."""
         if self.daily_demand <= 0:
-            return float('inf')
+            return float("inf")
         return self.current_stock / self.daily_demand
 
 
@@ -224,41 +228,32 @@ class InventoryContext(BaseModel):
     """
 
     items: List[InventoryItem] = Field(
-        ...,
-        description="List of all inventory items to analyze"
+        ..., description="List of all inventory items to analyze"
     )
     suppliers: List[Supplier] = Field(
-        default_factory=list,
-        description="List of all available suppliers"
+        default_factory=list, description="List of all available suppliers"
     )
     analysis_date: datetime = Field(
-        default_factory=datetime.now,
-        description="Date and time of the analysis"
+        default_factory=datetime.now, description="Date and time of the analysis"
     )
     region: str = Field(
-        default="Multi-region",
-        description="Geographic region for the analysis"
+        default="Multi-region", description="Geographic region for the analysis"
     )
     total_locations: int = Field(
-        default=1,
-        description="Total number of locations in the supply chain"
+        default=1, description="Total number of locations in the supply chain"
     )
     budget_constraints: Optional[float] = Field(
-        None,
-        description="Optional budget constraints for restocking"
+        None, description="Optional budget constraints for restocking"
     )
     urgent_items: List[str] = Field(
-        default_factory=list,
-        description="List of item IDs requiring urgent attention"
+        default_factory=list, description="List of item IDs requiring urgent attention"
     )
 
-    model_config = ConfigDict(
-        arbitrary_types_allowed=True
-    )
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    @field_validator('items')
+    @field_validator("items")
     @classmethod
-    def validate_items(cls, v):
+    def validate_items(cls, v: List[InventoryItem]) -> List[InventoryItem]:
         """Validate that items list is not empty."""
         if not v:
             raise ValueError("Items list cannot be empty")
@@ -282,7 +277,7 @@ class InventoryContext(BaseModel):
     @property
     def items_by_category(self) -> Dict[ProductCategory, List[InventoryItem]]:
         """Group items by product category."""
-        categories = {}
+        categories: Dict[ProductCategory, List[InventoryItem]] = {}
         for item in self.items:
             if item.category not in categories:
                 categories[item.category] = []
@@ -292,7 +287,7 @@ class InventoryContext(BaseModel):
     @property
     def items_by_supplier(self) -> Dict[str, List[InventoryItem]]:
         """Group items by supplier."""
-        suppliers = {}
+        suppliers: Dict[str, List[InventoryItem]] = {}
         for item in self.items:
             if item.supplier_id not in suppliers:
                 suppliers[item.supplier_id] = []
@@ -311,7 +306,13 @@ class InventoryContext(BaseModel):
             "items_below_threshold": len(self.items_below_threshold),
             "critical_items": len(self.critical_items),
             "total_suppliers": len(set(item.supplier_id for item in self.items)),
-            "total_stock_value": sum(item.current_stock * item.unit_cost for item in self.items),
-            "average_stock_level": sum(item.current_stock for item in self.items) / self.total_items if self.total_items > 0 else 0,
-            "categories": len(set(item.category for item in self.items))
+            "total_stock_value": sum(
+                item.current_stock * item.unit_cost for item in self.items
+            ),
+            "average_stock_level": (
+                sum(item.current_stock for item in self.items) / self.total_items
+                if self.total_items > 0
+                else 0
+            ),
+            "categories": len(set(item.category for item in self.items)),
         }

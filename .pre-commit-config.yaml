@@ -1,34 +1,37 @@
-repos:
-  # Standard hooks for file formatting
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: check-merge-conflict
-      - id: debug-statements
+# PRE-COMMIT HOOKS DISABLED FOR SAMPLE PROJECT
+# Uncomment when ready for production-level code quality enforcement
 
-  # Black code formatting (matches pyproject.toml config)
-  - repo: https://github.com/psf/black
-    rev: 24.8.0
-    hooks:
-      - id: black
-        language_version: python3.11
+# repos:
+#   # Standard hooks for file formatting
+#   - repo: https://github.com/pre-commit/pre-commit-hooks
+#     rev: v4.6.0
+#     hooks:
+#       - id: trailing-whitespace
+#       - id: end-of-file-fixer
+#       - id: check-yaml
+#       - id: check-added-large-files
+#       - id: check-merge-conflict
+#       - id: debug-statements
 
-  # Ruff linting (matches pyproject.toml config)
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.0
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
+#   # Black code formatting (matches pyproject.toml config)
+#   - repo: https://github.com/psf/black
+#     rev: 24.8.0
+#     hooks:
+#       - id: black
+#         language_version: python3.11
 
-  # MyPy type checking (matches pyproject.toml config)
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.0
-    hooks:
-      - id: mypy
-        additional_dependencies: [types-requests]
-        args: [--ignore-missing-imports]
+#   # Ruff linting (matches pyproject.toml config)
+#   - repo: https://github.com/astral-sh/ruff-pre-commit
+#     rev: v0.6.0
+#     hooks:
+#       - id: ruff
+#         args: [--fix]
+#       - id: ruff-format
+
+#   # MyPy type checking (matches pyproject.toml config)
+#   - repo: https://github.com/pre-commit/mirrors-mypy
+#     rev: v1.11.0
+#     hooks:
+#       - id: mypy
+#         additional_dependencies: [types-requests]
+#         args: [--ignore-missing-imports]

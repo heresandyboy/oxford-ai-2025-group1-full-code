@@ -1,6 +1,6 @@
 # Agent 01 - Inventory Threshold Monitor
 
-**Team Member**: Martin  
+**Team Member**: Martin
 **Purpose**: Monitor inventory levels and identify items needing restocking
 
 ## 📁 What's in This Folder
@@ -31,7 +31,7 @@
 **`priority_classifier`**: Takes items below threshold and sorts by urgency
 
 - **HIGH**: Critical stock levels (immediate action needed)
-- **MEDIUM**: Important categories like skincare (plan restocking)  
+- **MEDIUM**: Important categories like skincare (plan restocking)
 - **LOW**: Other items (monitor but not urgent)
 
 ## 🚀 Quick Start
@@ -39,6 +39,22 @@
 1. **First, read the main project README** to understand the setup
 2. **Test your agent**: `python -m pytest -m agent01`
 3. **Try the sample notebook** (copy from `notebooks/samples/`)
+
+## 📓 Development Workflow
+
+**Follow the iterative development process:**
+
+👉 **[Complete Iteration Guide](../../../Getting_Started/03_Quick_Iteration_Guide.md)** 👈
+
+**Quick workflow:**
+
+1. Copy sample notebook: `cp notebooks/samples/agent01_sample_demo.ipynb notebooks/agent01_martin_demo.ipynb`
+2. Make changes to `agent.py` and `tools/` files in VSCode
+3. Run reload cell in notebook: `importlib.reload(agent_module)`
+4. Compare tool inputs/outputs across iterations
+5. Document improvements and lessons learned
+
+The guide shows you how to capture detailed tool inputs/outputs for each iteration!
 
 ## 💡 Ideas for Iterations
 
@@ -51,7 +67,7 @@
 
 **Improve threshold detection:**
 
-- Add "days until stockout" calculations  
+- Add "days until stockout" calculations
 - Consider demand variability
 - Create different severity levels
 - Add trend analysis (stock declining fast?)

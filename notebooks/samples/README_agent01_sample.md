@@ -4,18 +4,20 @@ Simple guide for developing your agent using the **"Lab Notebook"** approach - e
 
 ## 🚀 **Quick Start**
 
-### **Option 1: Google Colab (Easiest)**
+### **Option 1: VSCode (Recommended)**
+
+1. Open the project in VSCode (install recommended extensions when prompted)
+2. Open `agent01_sample_demo.ipynb` directly in VSCode
+3. Add API key to `.env` file: `OPENAI_API_KEY=your-key-here`
+4. Select the project's Python interpreter (`.venv/bin/python`)
+5. Run notebook cells directly in VSCode - done!
+
+### **Option 2: Google Colab**
 
 1. Click the **"Open in Colab"** badge in the notebook
 2. Add your OpenAI API key to Colab secrets:
    - Click 🔑 icon in left sidebar → Add `OPENAI_API_KEY`
 3. Run all cells - done!
-
-### **Option 2: Local Development**
-
-1. Copy `agent01_sample_demo.ipynb` as your template
-2. Add API key to `.env` file: `OPENAI_API_KEY=your-key-here`
-3. Start Jupyter: `python -m jupyterlab`
 
 ## 🔄 **Development Workflow**
 

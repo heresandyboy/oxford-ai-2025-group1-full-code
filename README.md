@@ -4,6 +4,8 @@
 
 ## 🚀 Quick Start
 
+**VSCode Users**: This project includes optimized VSCode settings and extension recommendations in `.vscode/`. Simply open the project in VSCode and install the recommended extensions when prompted.
+
 First copy the `.env.example` file to a new file called `.env` in the same directory and enter your `OPENAI_API_KEY`
 
 1. **Install & Setup**:
@@ -186,3 +188,129 @@ Each specialist agent implements domain expertise and can be used as a tool by t
 ---
 
 **Ready to start?** → [`Getting_Started/01_Course_Guide.md`](Getting_Started/01_Course_Guide.md)
+
+---
+
+## 📊 System Architecture Diagrams
+
+### Overall System Architecture - "Agents as Tools" Pattern
+
+```mermaid
+%% =============================================================================
+%% LOGISTICS AGENTS SYSTEM ARCHITECTURE - "Agents as Tools" Pattern
+%% =============================================================================
+
+%% Overall System Architecture
+graph TB
+    subgraph "🏢 Logistics Multi-Agent System"
+        Main["🚀 main.py<br/>Entry Point"] --> Orchestrator["🎯 Agent 05<br/>Orchestrator<br/>(Andy)"]
+
+        subgraph "🎛️ Orchestrator Tools"
+            OT1["📋 agent_coordinator"]
+            OT2["📊 result_synthesizer"]
+        end
+
+        subgraph "🔧 Specialist Agents (as Tools)"
+            Agent01["🚨 Agent 01<br/>Threshold Monitor<br/>(Martin)"]
+            Agent02["🗺️ Agent 02<br/>Route Computer<br/>(Rhiannon)"]
+            Agent03["📈 Agent 03<br/>Restock Calculator<br/>(Nathan)"]
+            Agent04["📦 Agent 04<br/>Order Consolidator<br/>(Anagha)"]
+        end
+
+        Orchestrator --> OT1
+        Orchestrator --> OT2
+        Orchestrator -.->|"as_tool()"| Agent01
+        Orchestrator -.->|"as_tool()"| Agent02
+        Orchestrator -.->|"as_tool()"| Agent03
+        Orchestrator -.->|"as_tool()"| Agent04
+    end
+
+    subgraph "📊 Data Flow"
+        CSV["📄 Inventory CSV"] --> Context["🏗️ InventoryContext"]
+        Context --> Orchestrator
+    end
+
+    style Orchestrator fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
+    style Agent01 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Agent02 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Agent03 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style Agent04 fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+```
+
+### Agent 05 - Orchestrator Workflow
+
+```mermaid
+graph TD
+    subgraph "🎯 Agent 05 - Orchestrator Workflow (Andy)"
+        Start["🚀 Start Analysis"] --> Coord["📋 coordinate_workflow_steps<br/>Plan execution sequence"]
+
+        Coord --> Step1["1️⃣ Call InventoryThresholdMonitor<br/>Identify urgent items"]
+        Step1 --> Step2["2️⃣ Call RestockingCalculator<br/>Calculate optimal quantities"]
+        Step2 --> Step3["3️⃣ Call RouteComputer<br/>Plan delivery routes"]
+        Step3 --> Step4["4️⃣ Call OrderConsolidator<br/>Optimize order grouping"]
+        Step4 --> Synth["📊 create_executive_summary<br/>Synthesize all results"]
+
+        Synth --> Final["📋 Final Recommendations<br/>Comprehensive logistics plan"]
+    end
+
+    subgraph "🔄 Agents as Tools Pattern"
+        AgentTools["🔧 Specialist Agents Available as Tools"]
+        AgentTools --> T1["🚨 InventoryThresholdMonitor.as_tool()"]
+        AgentTools --> T2["🗺️ RouteComputer.as_tool()"]
+        AgentTools --> T3["📈 RestockingCalculator.as_tool()"]
+        AgentTools --> T4["📦 OrderConsolidator.as_tool()"]
+    end
+
+    Step1 -.-> T1
+    Step2 -.-> T3
+    Step3 -.-> T2
+    Step4 -.-> T4
+
+    style Start fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
+    style Final fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    style Coord fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Synth fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+```
+
+### Data Flow Sequence
+
+```mermaid
+sequenceDiagram
+    participant CSV as 📄 CSV Data
+    participant Main as 🚀 main.py
+    participant Orch as 🎯 Orchestrator
+    participant A01 as 🚨 Agent 01<br/>Threshold
+    participant A03 as 📈 Agent 03<br/>Restock Calc
+    participant A02 as 🗺️ Agent 02<br/>Route Comp
+    participant A04 as 📦 Agent 04<br/>Consolidator
+
+    CSV->>Main: Load inventory data
+    Main->>Orch: InventoryContext
+
+    Note over Orch: 📋 coordinate_workflow_steps
+
+    Orch->>A01: Analyze thresholds
+    A01->>A01: threshold_checker
+    A01->>A01: priority_classifier
+    A01->>Orch: Priority items + urgency
+
+    Orch->>A03: Calculate quantities
+    A03->>A03: demand_forecaster
+    A03->>A03: quantity_optimizer
+    A03->>Orch: Optimal quantities + costs
+
+    Orch->>A02: Plan routes
+    A02->>A02: route_calculator
+    A02->>A02: delivery_scheduler
+    A02->>Orch: Routes + schedules
+
+    Orch->>A04: Consolidate orders
+    A04->>A04: supplier_matcher
+    A04->>A04: order_optimizer
+    A04->>Orch: Consolidated orders + savings
+
+    Note over Orch: 📊 create_executive_summary
+
+    Orch->>Main: Final recommendations
+    Main->>Main: 📋 Display results
+```

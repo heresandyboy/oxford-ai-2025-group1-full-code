@@ -2,11 +2,11 @@
 
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
-from pydantic import Field, ConfigDict
-from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -20,13 +20,14 @@ class Settings(BaseSettings):
     Settings are loaded from environment variables and .env files.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """Initialize settings with fresh .env file reload."""
         # Force reload .env file to get latest values every time
         load_dotenv(override=True)
         super().__init__(**kwargs)
 
         # OpenAI Configuration
+
     openai_api_key: str = "sk-placeholder-key"
     openai_model: str = "gpt-4o-mini"
 
@@ -54,11 +55,8 @@ class Settings(BaseSettings):
     # Performance Configuration
     concurrent_agents: int = 3
 
-    model_config = ConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=False,
-        extra="ignore"
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=False, extra="ignore"
     )
 
     def validate_paths(self) -> None:
@@ -86,7 +84,7 @@ class Settings(BaseSettings):
             "model": self.openai_model,
             "api_key": self.openai_api_key,
             "debug": self.debug,
-            "max_iterations": self.max_iterations
+            "max_iterations": self.max_iterations,
         }
 
     def truncate_text(self, text: str, max_length: int, label: str = "") -> str:
@@ -127,11 +125,11 @@ class AutoRefreshSettings:
     without requiring manual reloads or restart.
     """
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         """Delegate all attribute access to a fresh Settings instance."""
         return getattr(get_settings(), name)
 
-    def __call__(self):
+    def __call__(self) -> Settings:
         """Allow calling like settings() to get fresh instance."""
         return get_settings()
 

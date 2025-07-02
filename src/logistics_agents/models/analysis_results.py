@@ -2,9 +2,9 @@
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional, Any, Union
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 @dataclass
@@ -31,16 +31,16 @@ class ThresholdMonitorResult:
     reorder_urgency: Dict[str, int]  # item_id -> days until stockout
     recommendations: List[str]
     summary: str
-    analysis_metadata: Dict[str, Any] = None
+    analysis_metadata: Optional[Dict[str, Any]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize metadata if not provided."""
         if self.analysis_metadata is None:
             self.analysis_metadata = {
                 "total_analyzed": len(self.priority_classifications),
                 "below_threshold_count": len(self.items_below_threshold),
                 "critical_count": len(self.critical_items),
-                "analysis_timestamp": datetime.now().isoformat()
+                "analysis_timestamp": datetime.now().isoformat(),
             }
 
     @property
@@ -51,8 +51,11 @@ class ThresholdMonitorResult:
     @property
     def high_priority_items(self) -> List[str]:
         """Get list of high priority items."""
-        return [item_id for item_id, priority in self.priority_classifications.items()
-                if priority == "HIGH"]
+        return [
+            item_id
+            for item_id, priority in self.priority_classifications.items()
+            if priority == "HIGH"
+        ]
 
 
 @dataclass
@@ -73,16 +76,16 @@ class RouteComputationResult:
     """
 
     optimal_routes: Dict[str, List[str]]  # route_id -> [locations]
-    delivery_schedules: Dict[str, str]    # route_id -> schedule description
+    delivery_schedules: Dict[str, str]  # route_id -> schedule description
     # route_id -> efficiency_score (0-100)
     efficiency_metrics: Dict[str, float]
-    cost_estimates: Dict[str, float]      # route_id -> estimated_cost
+    cost_estimates: Dict[str, float]  # route_id -> estimated_cost
     # route_id -> [consolidatable_routes]
-    consolidation_opportunities: Dict[str, List[str]] = None
-    recommendations: List[str] = None
+    consolidation_opportunities: Optional[Dict[str, List[str]]] = None
+    recommendations: Optional[List[str]] = None
     summary: str = ""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize optional fields."""
         if self.consolidation_opportunities is None:
             self.consolidation_opportunities = {}
@@ -106,7 +109,9 @@ class RouteComputationResult:
         """Get the most efficient route ID."""
         if not self.efficiency_metrics:
             return None
-        return max(self.efficiency_metrics.keys(), key=lambda k: self.efficiency_metrics[k])
+        return max(
+            self.efficiency_metrics.keys(), key=lambda k: self.efficiency_metrics[k]
+        )
 
 
 @dataclass
@@ -133,11 +138,11 @@ class RestockCalculationResult:
     demand_forecasts: Dict[str, Dict[str, Any]]  # item_id -> forecast_data
     # item_id -> estimated_order_cost
     cost_estimates: Dict[str, float]
-    abc_classifications: Dict[str, str]          # item_id -> ABC_class
-    recommendations: List[str] = None
+    abc_classifications: Dict[str, str]  # item_id -> ABC_class
+    recommendations: Optional[List[str]] = None
     summary: str = ""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize optional fields."""
         if self.recommendations is None:
             self.recommendations = []
@@ -155,8 +160,11 @@ class RestockCalculationResult:
     @property
     def high_value_items(self) -> List[str]:
         """Get list of high-value items (A classification)."""
-        return [item_id for item_id, classification in self.abc_classifications.items()
-                if classification == "A"]
+        return [
+            item_id
+            for item_id, classification in self.abc_classifications.items()
+            if classification == "A"
+        ]
 
 
 @dataclass
@@ -180,13 +188,13 @@ class OrderConsolidationResult:
     consolidation_opportunities: Dict[str, Any]
     # supplier_id -> optimization_data
     supplier_optimizations: Dict[str, Dict[str, Any]]
-    estimated_savings: Dict[str, float]          # savings_type -> amount
-    consolidation_schedule: Dict[str, Any]       # schedule_info
-    coordination_requirements: List[str] = None
-    recommendations: List[str] = None
+    estimated_savings: Dict[str, float]  # savings_type -> amount
+    consolidation_schedule: Dict[str, Any]  # schedule_info
+    coordination_requirements: Optional[List[str]] = None
+    recommendations: Optional[List[str]] = None
     summary: str = ""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize optional fields."""
         if self.coordination_requirements is None:
             self.coordination_requirements = []
@@ -202,7 +210,8 @@ class OrderConsolidationResult:
     def high_impact_consolidations(self) -> Dict[str, Any]:
         """Get consolidation opportunities with savings > $500."""
         return {
-            cons_type: details for cons_type, details in self.consolidation_opportunities.items()
+            cons_type: details
+            for cons_type, details in self.consolidation_opportunities.items()
             if self.estimated_savings.get(cons_type, 0) > 500
         }
 
@@ -210,7 +219,8 @@ class OrderConsolidationResult:
     def preferred_suppliers(self) -> List[str]:
         """Get list of suppliers recommended for preferred status."""
         return [
-            supplier_id for supplier_id, opt_data in self.supplier_optimizations.items()
+            supplier_id
+            for supplier_id, opt_data in self.supplier_optimizations.items()
             if opt_data.get("strategy") == "PREFERRED_SUPPLIER"
         ]
 
@@ -245,57 +255,52 @@ class ComprehensiveSupplyChainAnalysis(BaseModel):
 
     # Synthesized analysis
     agent_contributions: Dict[str, str] = Field(
-        default_factory=dict,
-        description="Summary of each agent's key contributions"
+        default_factory=dict, description="Summary of each agent's key contributions"
     )
     priority_actions: List[Dict[str, Any]] = Field(
         default_factory=list,
-        description="Ranked list of recommended actions with priorities and timelines"
+        description="Ranked list of recommended actions with priorities and timelines",
     )
     estimated_annual_savings: float = Field(
-        default=0.0,
-        description="Total projected annual cost savings"
+        default=0.0, description="Total projected annual cost savings"
     )
     implementation_timeline: Dict[str, List[str]] = Field(
-        default_factory=dict,
-        description="Phased implementation plan with timelines"
+        default_factory=dict, description="Phased implementation plan with timelines"
     )
     risk_assessment: Dict[str, Any] = Field(
-        default_factory=dict,
-        description="Identified risks and mitigation strategies"
+        default_factory=dict, description="Identified risks and mitigation strategies"
     )
     success_metrics: List[str] = Field(
-        default_factory=list,
-        description="KPIs for measuring implementation success"
+        default_factory=list, description="KPIs for measuring implementation success"
     )
     executive_summary: str = Field(
         default="",
-        description="High-level business summary of findings and recommendations"
+        description="High-level business summary of findings and recommendations",
     )
     next_steps: List[str] = Field(
         default_factory=list,
-        description="Specific actions for immediate implementation"
+        description="Specific actions for immediate implementation",
     )
 
     # Metadata
     analysis_timestamp: datetime = Field(
         default_factory=datetime.now,
-        description="When this comprehensive analysis was completed"
+        description="When this comprehensive analysis was completed",
     )
     total_items_analyzed: int = Field(
-        default=0,
-        description="Total number of inventory items analyzed"
+        default=0, description="Total number of inventory items analyzed"
     )
 
-    model_config = ConfigDict(
-        arbitrary_types_allowed=True
-    )
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @property
     def urgent_actions(self) -> List[Dict[str, Any]]:
         """Get list of urgent actions (HIGH priority)."""
-        return [action for action in self.priority_actions
-                if action.get("priority") == "HIGH"]
+        return [
+            action
+            for action in self.priority_actions
+            if action.get("priority") == "HIGH"
+        ]
 
     @property
     def total_potential_savings(self) -> float:
@@ -341,36 +346,47 @@ class ComprehensiveSupplyChainAnalysis(BaseModel):
 
         if self.threshold_analysis:
             summary["threshold_monitor"] = {
-                "items_below_threshold": len(self.threshold_analysis.items_below_threshold),
-                "critical_items": len(self.threshold_analysis.critical_items),
-                "urgent_action_required": self.threshold_analysis.urgent_action_required
+                "items_below_threshold": float(
+                    len(self.threshold_analysis.items_below_threshold)
+                ),
+                "critical_items": float(len(self.threshold_analysis.critical_items)),
+                "urgent_action_required": self.threshold_analysis.urgent_action_required,
             }
 
         if self.route_computation:
             summary["route_computer"] = {
-                "total_routes": len(self.route_computation.optimal_routes),
+                "total_routes": float(len(self.route_computation.optimal_routes)),
                 "average_efficiency": self.route_computation.average_efficiency,
-                "total_cost": self.route_computation.total_estimated_cost
+                "total_cost": self.route_computation.total_estimated_cost,
             }
 
         if self.restock_calculation:
             summary["restock_calculator"] = {
-                "items_requiring_orders": len(self.restock_calculation.items_requiring_orders),
+                "items_requiring_orders": float(
+                    len(self.restock_calculation.items_requiring_orders)
+                ),
                 "total_order_value": self.restock_calculation.total_order_value,
-                "high_value_items": len(self.restock_calculation.high_value_items)
+                "high_value_items": float(
+                    len(self.restock_calculation.high_value_items)
+                ),
             }
 
         if self.order_consolidation:
             summary["order_consolidation"] = {
                 "total_savings": self.order_consolidation.total_estimated_savings,
-                "consolidation_opportunities": len(self.order_consolidation.consolidation_opportunities),
-                "preferred_suppliers": len(self.order_consolidation.preferred_suppliers)
+                "consolidation_opportunities": float(
+                    len(self.order_consolidation.consolidation_opportunities)
+                ),
+                "preferred_suppliers": float(
+                    len(self.order_consolidation.preferred_suppliers)
+                ),
             }
 
         return summary
 
 
 # Additional helper models for complex data structures
+
 
 @dataclass
 class ActionItem:
@@ -393,11 +409,11 @@ class ActionItem:
     priority: str
     timeline: str
     responsible_party: str
-    dependencies: List[str] = None
-    success_criteria: List[str] = None
+    dependencies: Optional[List[str]] = None
+    success_criteria: Optional[List[str]] = None
     estimated_impact: str = ""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize optional fields."""
         if self.dependencies is None:
             self.dependencies = []
@@ -422,11 +438,11 @@ class RiskAssessment:
     risk_id: str
     description: str
     probability: str  # LOW, MEDIUM, HIGH
-    impact: str       # LOW, MEDIUM, HIGH
+    impact: str  # LOW, MEDIUM, HIGH
     mitigation_strategies: List[str]
-    contingency_plans: List[str] = None
+    contingency_plans: Optional[List[str]] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize optional fields."""
         if self.contingency_plans is None:
             self.contingency_plans = []
@@ -443,6 +459,6 @@ class RiskAssessment:
             ("MEDIUM", "HIGH"): "HIGH",
             ("HIGH", "LOW"): "MEDIUM",
             ("HIGH", "MEDIUM"): "HIGH",
-            ("HIGH", "HIGH"): "HIGH"
+            ("HIGH", "HIGH"): "HIGH",
         }
         return risk_matrix.get((self.probability, self.impact), "MEDIUM")

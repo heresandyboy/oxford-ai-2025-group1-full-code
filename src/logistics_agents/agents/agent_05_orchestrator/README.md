@@ -1,6 +1,6 @@
 # Agent 05 - Orchestrator
 
-**Team Member**: Andy  
+**Team Member**: Andy
 **Purpose**: Coordinate all logistics agents using the "Agents as Tools" pattern
 
 ## 📁 What's in This Folder
@@ -51,6 +51,23 @@ Your agent showcases the **"Agents as Tools"** pattern:
 1. **First, read the main project README** to understand the setup
 2. **Test your agent**: `python -m pytest -m agent05`
 3. **Try the sample notebook** (copy from `notebooks/samples/`)
+
+## 📓 Development Workflow
+
+**Follow the iterative development process:**
+
+👉 **[Complete Iteration Guide](../../../Getting_Started/03_Quick_Iteration_Guide.md)** 👈
+
+**Quick workflow:**
+
+1. Copy sample notebook: `cp notebooks/samples/agent01_sample_demo.ipynb notebooks/agent05_andy_demo.ipynb`
+2. Update imports: `from ...agent_05_orchestrator.agent import Orchestrator`
+3. Make changes to `agent.py` and `tools/` files in VSCode
+4. Run reload cell in notebook: `importlib.reload(agent_module)`
+5. Compare tool inputs/outputs across iterations
+6. Document improvements and lessons learned
+
+The guide shows you how to capture detailed tool inputs/outputs for each iteration!
 
 ## 💡 Ideas for Iterations
 

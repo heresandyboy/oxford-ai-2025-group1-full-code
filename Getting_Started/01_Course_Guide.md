@@ -2,14 +2,14 @@
 
 ## Course Overview
 
-**Event**: Oxford Artificial Intelligence Summit 2025 (June 27-28, 2025)  
-**Theme**: "Autonomous AI Agents: Learning from deployments (low-code & full-code)"  
-**Deadline**: July 6, 2025  
-**Track**: Full-code implementation  
+**Event**: Oxford Artificial Intelligence Summit 2025 (June 27-28, 2025)
+**Theme**: "Autonomous AI Agents: Learning from deployments (low-code & full-code)"
+**Deadline**: July 6, 2025
+**Track**: Full-code implementation
 
 ## Your Use Case: Logistics - Shipment and Delivery Tracking
 
-**Use Case**: Analyzing logistics operations including warehouse handling, dispatch, and delivery  
+**Use Case**: Analyzing logistics operations including warehouse handling, dispatch, and delivery
 **Goal**: Minimize delivery delays, improve routing efficiency, and manage supply chain risks
 
 ## Prerequisites (Must Have)
@@ -49,25 +49,27 @@ You must complete ALL of the following:
 
 ### Step 1: Quick Start (5 minutes)
 
-**Option A: Google Colab (Recommended)**
+**Option A: VSCode (Recommended)**
+
+1. Open the project in VSCode (install recommended extensions when prompted)
+2. Open the sample notebook: `notebooks/agent01_sample_demo.ipynb`
+3. Add your OpenAI API key to `.env` file
+4. Select the project's Python interpreter (`.venv/bin/python`)
+5. Run notebook cells directly in VSCode
+
+**Option B: Google Colab**
 
 1. Open the sample notebook: `notebooks/agent01_sample_demo.ipynb`
 2. Click "Open in Colab" badge
 3. Add your OpenAI API key to Colab secrets (🔑 icon)
 4. Run all cells to verify setup
 
-**Option B: Local Development**
-
-1. Copy the sample notebook as your template
-2. Follow instructions in `notebooks/README_agent01_sample.md`
-3. Add API key to `.env` file and start Jupyter
-
 ### Step 2: Choose Your Agent Pattern & Domain
 
 **For Logistics, we recommend "Agents as Tools" pattern because:**
 
 - Dynamic decision-making fits logistics complexity
-- Specialist agents can handle different logistics domains  
+- Specialist agents can handle different logistics domains
 - Orchestrator can coordinate based on real-time conditions
 
 **Choose your logistics domain:**
@@ -123,7 +125,7 @@ Document at least 3 iterations following the sample pattern:
 Test your agents with realistic logistics scenarios:
 
 1. **Inventory scenarios**: Low stock alerts, critical item prioritization
-2. **Route scenarios**: Multi-stop optimization, traffic considerations  
+2. **Route scenarios**: Multi-stop optimization, traffic considerations
 3. **Demand scenarios**: Seasonal patterns, demand forecasting
 4. **Integration scenarios**: Multiple agents working together
 
@@ -133,7 +135,7 @@ Test your agents with realistic logistics scenarios:
 
 ### Submission Method
 
-**Email to**: <ayse.mutlu@conted.ox.ac.uk>  
+**Email to**: <ayse.mutlu@conted.ox.ac.uk>
 **Subject**: "Oxford AI Summit - Logistics Use Case Submission - [Your Name]"
 
 ### Required Deliverables

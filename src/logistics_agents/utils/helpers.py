@@ -1,10 +1,12 @@
 """Shared utility functions and helpers for logistics agents."""
 
-import uuid
 import re
+import time
+import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
+
 import pandas as pd
 
 
@@ -27,12 +29,7 @@ def format_currency(amount: float, currency: str = "USD") -> str:
     """
 
     # Currency symbols mapping
-    currency_symbols = {
-        "USD": "$",
-        "GBP": "£",
-        "EUR": "€",
-        "INR": "₹"
-    }
+    currency_symbols = {"USD": "$", "GBP": "£", "EUR": "€", "INR": "₹"}
 
     symbol = currency_symbols.get(currency.upper(), currency)
 
@@ -62,14 +59,13 @@ def calculate_percentage_change(old_value: float, new_value: float) -> float:
     """
 
     if old_value == 0:
-        return 0.0 if new_value == 0 else float('inf')
+        return 0.0 if new_value == 0 else float("inf")
 
     return ((new_value - old_value) / old_value) * 100
 
 
 def validate_csv_structure(
-    csv_path: Path,
-    required_columns: List[str]
+    csv_path: Path, required_columns: List[str]
 ) -> Dict[str, Any]:
     """
     Validate that a CSV file has the required structure and columns.
@@ -88,7 +84,7 @@ def validate_csv_structure(
 
     Examples:
         >>> result = validate_csv_structure(
-        ...     Path("data.csv"), 
+        ...     Path("data.csv"),
         ...     ["SKU", "Price", "Stock levels"]
         ... )
         >>> result["is_valid"]
@@ -100,7 +96,7 @@ def validate_csv_structure(
         "missing_columns": [],
         "extra_columns": [],
         "row_count": 0,
-        "error_message": ""
+        "error_message": "",
     }
 
     try:
@@ -211,13 +207,13 @@ def clean_string(text: str) -> str:
         return str(text)
 
     # Remove extra whitespace
-    cleaned = re.sub(r'\s+', ' ', text.strip())
+    cleaned = re.sub(r"\s+", " ", text.strip())
 
     # Remove special characters but keep spaces, letters, numbers
-    cleaned = re.sub(r'[^\w\s-]', ' ', cleaned)
+    cleaned = re.sub(r"[^\w\s-]", " ", cleaned)
 
     # Remove extra spaces again
-    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
 
     return cleaned
 
@@ -249,7 +245,7 @@ def parse_numeric_string(value: str, default: float = 0.0) -> float:
             return default
 
     # Remove common non-numeric characters
-    cleaned = re.sub(r'[$£€₹,\s%]', '', value)
+    cleaned = re.sub(r"[$£€₹,\s%]", "", value)
 
     try:
         return float(cleaned)
@@ -305,13 +301,11 @@ def chunk_list(data: List[Any], chunk_size: int) -> List[List[Any]]:
     if chunk_size <= 0:
         raise ValueError("Chunk size must be positive")
 
-    return [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
+    return [data[i : i + chunk_size] for i in range(0, len(data), chunk_size)]
 
 
 def flatten_dict(
-    nested_dict: Dict[str, Any],
-    separator: str = ".",
-    prefix: str = ""
+    nested_dict: Dict[str, Any], separator: str = ".", prefix: str = ""
 ) -> Dict[str, Any]:
     """
     Flatten a nested dictionary into a single-level dictionary.
@@ -396,17 +390,17 @@ def format_file_size(size_bytes: int) -> str:
 
     size_names = ["B", "KB", "MB", "GB", "TB"]
     i = 0
+    size_float = float(size_bytes)
 
-    while size_bytes >= 1024 and i < len(size_names) - 1:
-        size_bytes /= 1024.0
+    while size_float >= 1024 and i < len(size_names) - 1:
+        size_float /= 1024.0
         i += 1
 
-    return f"{size_bytes:.1f} {size_names[i]}"
+    return f"{size_float:.1f} {size_names[i]}"
 
 
 def get_timestamp_string(
-    include_microseconds: bool = False,
-    use_utc: bool = False
+    include_microseconds: bool = False, use_utc: bool = False
 ) -> str:
     """
     Get a formatted timestamp string for logging or file naming.
@@ -447,17 +441,19 @@ class Timer:
         print(f"Execution took {timer.elapsed:.2f} seconds")
     """
 
-    def __init__(self):
-        self.start_time = None
-        self.end_time = None
+    def __init__(self) -> None:
+        self.start_time: Optional[float] = None
+        self.end_time: Optional[float] = None
 
-    def __enter__(self):
+    def __enter__(self) -> "Timer":
         import time
+
         self.start_time = time.time()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         import time
+
         self.end_time = time.time()
 
     @property
@@ -466,15 +462,15 @@ class Timer:
         if self.start_time is None:
             return 0.0
 
-        end = self.end_time or time.time()
+        end = self.end_time if self.end_time is not None else time.time()
         return end - self.start_time
 
 
 def retry_operation(
-    operation,
+    operation: Callable[[], Any],
     max_attempts: int = 3,
     delay_seconds: float = 1.0,
-    exceptions: tuple = (Exception,)
+    exceptions: tuple = (Exception,),
 ) -> Any:
     """
     Retry an operation with exponential backoff.
@@ -504,7 +500,7 @@ def retry_operation(
 
             if attempt < max_attempts - 1:
                 # Exponential backoff
-                wait_time = delay_seconds * (2 ** attempt)
+                wait_time = delay_seconds * (2**attempt)
                 time.sleep(wait_time)
             else:
                 # Last attempt failed

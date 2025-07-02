@@ -1,20 +1,19 @@
 """Logging configuration with enhanced file logging and agent/tool tracking."""
 
-import logging
-import sys
-import os
 import getpass
+import logging
 from datetime import datetime
-from pathlib import Path
-from typing import Optional, Any, Callable, TypeVar, ParamSpec
 from functools import wraps
+from pathlib import Path
+from typing import Awaitable, Callable, Optional, ParamSpec, TypeVar, cast
+
 from rich.logging import RichHandler
 
 from ..config.settings import settings
 
 # Type hints for decorators
-P = ParamSpec('P')
-T = TypeVar('T')
+P = ParamSpec("P")
+T = TypeVar("T")
 
 # Global logger instances
 _console_logger: Optional[logging.Logger] = None
@@ -64,11 +63,11 @@ def setup_logging() -> tuple[logging.Logger, logging.Logger]:
     _file_logger.handlers.clear()
 
     # File handler
-    file_handler = logging.FileHandler(log_filepath, encoding='utf-8')
+    file_handler = logging.FileHandler(log_filepath, encoding="utf-8")
     file_handler.setLevel(logging.DEBUG)
     file_format = logging.Formatter(
         "%(asctime)s | %(levelname)-8s | %(name)-20s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
     file_handler.setFormatter(file_format)
     _file_logger.addHandler(file_handler)
@@ -83,7 +82,8 @@ def setup_logging() -> tuple[logging.Logger, logging.Logger]:
     _file_logger.info(f"User: {username}")
     _file_logger.info(f"Log file: {log_filepath}")
     _file_logger.info(
-        f"Settings: model={settings.openai_model}, log_level={settings.log_level}")
+        f"Settings: model={settings.openai_model}, log_level={settings.log_level}"
+    )
     _console_logger.info(f"📝 Logging to: {log_filepath}")
 
     return _console_logger, _file_logger
@@ -96,7 +96,9 @@ def get_loggers() -> tuple[logging.Logger, logging.Logger]:
     return setup_logging()
 
 
-def log_agent_interaction(agent_name: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
+def log_agent_interaction(
+    agent_name: str,
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Decorator to log agent inputs and outputs.
 
     Args:
@@ -105,35 +107,44 @@ def log_agent_interaction(agent_name: str) -> Callable[[Callable[P, T]], Callabl
     Returns:
         Decorated function with input/output logging
     """
+
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @wraps(func)
         async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             console_logger, file_logger = get_loggers()
 
             # Log input
-            input_msg = f"🤖 {agent_name} INPUT: {args[1] if len(args) > 1 else 'No input'}"
+            input_msg = (
+                f"🤖 {agent_name} INPUT: {args[1] if len(args) > 1 else 'No input'}"
+            )
             console_logger.info(f"🤖 {agent_name} starting...")
 
             # Use truncation settings for agent input
-            input_text = args[1] if len(args) > 1 else 'No input'
+            input_text = args[1] if len(args) > 1 else "No input"
             truncated_input = settings.truncate_text(
-                str(input_text), settings.log_truncate_agent_input)
+                str(input_text), settings.log_truncate_agent_input
+            )
             file_logger.info(f"AGENT_INPUT | {agent_name} | {truncated_input}")
 
             try:
                 # Execute function
-                result = await func(*args, **kwargs)
+                result = await cast(Callable[P, Awaitable[T]], func)(*args, **kwargs)
 
                 # Log output
-                output_str = str(result.final_output) if hasattr(
-                    result, 'final_output') else str(result)
+                output_str = (
+                    str(result.final_output)
+                    if hasattr(result, "final_output")
+                    else str(result)
+                )
                 console_logger.info(f"✅ {agent_name} completed")
 
                 # Use truncation settings for agent output
                 truncated_output = settings.truncate_text(
-                    output_str, settings.log_truncate_agent_output)
+                    output_str, settings.log_truncate_agent_output
+                )
                 file_logger.info(
-                    f"AGENT_OUTPUT | {agent_name} | SUCCESS | {truncated_output}")
+                    f"AGENT_OUTPUT | {agent_name} | SUCCESS | {truncated_output}"
+                )
 
                 return result
 
@@ -148,13 +159,16 @@ def log_agent_interaction(agent_name: str) -> Callable[[Callable[P, T]], Callabl
             console_logger, file_logger = get_loggers()
 
             # Log input
-            input_msg = f"🤖 {agent_name} INPUT: {args[1] if len(args) > 1 else 'No input'}"
+            input_msg = (
+                f"🤖 {agent_name} INPUT: {args[1] if len(args) > 1 else 'No input'}"
+            )
             console_logger.info(f"🤖 {agent_name} starting...")
 
             # Use truncation settings for agent input
-            input_text = args[1] if len(args) > 1 else 'No input'
+            input_text = args[1] if len(args) > 1 else "No input"
             truncated_input = settings.truncate_text(
-                str(input_text), settings.log_truncate_agent_input)
+                str(input_text), settings.log_truncate_agent_input
+            )
             file_logger.info(f"AGENT_INPUT | {agent_name} | {truncated_input}")
 
             try:
@@ -162,15 +176,20 @@ def log_agent_interaction(agent_name: str) -> Callable[[Callable[P, T]], Callabl
                 result = func(*args, **kwargs)
 
                 # Log output
-                output_str = str(result.final_output) if hasattr(
-                    result, 'final_output') else str(result)
+                output_str = (
+                    str(result.final_output)
+                    if hasattr(result, "final_output")
+                    else str(result)
+                )
                 console_logger.info(f"✅ {agent_name} completed")
 
                 # Use truncation settings for agent output
                 truncated_output = settings.truncate_text(
-                    output_str, settings.log_truncate_agent_output)
+                    output_str, settings.log_truncate_agent_output
+                )
                 file_logger.info(
-                    f"AGENT_OUTPUT | {agent_name} | SUCCESS | {truncated_output}")
+                    f"AGENT_OUTPUT | {agent_name} | SUCCESS | {truncated_output}"
+                )
 
                 return result
 
@@ -181,7 +200,12 @@ def log_agent_interaction(agent_name: str) -> Callable[[Callable[P, T]], Callabl
                 raise
 
         # Return appropriate wrapper based on function type
-        return async_wrapper if func.__code__.co_flags & 0x80 else sync_wrapper
+        import inspect
+
+        if inspect.iscoroutinefunction(func):
+            return async_wrapper  # type: ignore
+        else:
+            return sync_wrapper  # type: ignore
 
     return decorator
 
@@ -195,6 +219,7 @@ def log_tool_interaction(tool_name: str) -> Callable[[Callable[P, T]], Callable[
     Returns:
         Decorated function with input/output logging
     """
+
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
@@ -202,9 +227,9 @@ def log_tool_interaction(tool_name: str) -> Callable[[Callable[P, T]], Callable[
 
             # Extract context info if available
             context_info = "No context"
-            if args and hasattr(args[0], 'context'):
+            if args and hasattr(args[0], "context"):
                 ctx = args[0].context
-                if hasattr(ctx, 'items'):
+                if hasattr(ctx, "items"):
                     context_info = f"{len(ctx.items)} items"
 
             # Log input
@@ -212,9 +237,9 @@ def log_tool_interaction(tool_name: str) -> Callable[[Callable[P, T]], Callable[
 
             # Use truncation settings for tool input
             truncated_context = settings.truncate_text(
-                context_info, settings.log_truncate_tool_input)
-            file_logger.info(
-                f"TOOL_INPUT | {tool_name} | Context: {truncated_context}")
+                context_info, settings.log_truncate_tool_input
+            )
+            file_logger.info(f"TOOL_INPUT | {tool_name} | Context: {truncated_context}")
 
             try:
                 # Execute function
@@ -226,9 +251,11 @@ def log_tool_interaction(tool_name: str) -> Callable[[Callable[P, T]], Callable[
 
                 # Use truncation settings for tool output
                 truncated_output = settings.truncate_text(
-                    output_str, settings.log_truncate_tool_output)
+                    output_str, settings.log_truncate_tool_output
+                )
                 file_logger.info(
-                    f"TOOL_OUTPUT | {tool_name} | SUCCESS | {truncated_output}")
+                    f"TOOL_OUTPUT | {tool_name} | SUCCESS | {truncated_output}"
+                )
 
                 return result
 
@@ -239,6 +266,7 @@ def log_tool_interaction(tool_name: str) -> Callable[[Callable[P, T]], Callable[
                 raise
 
         return wrapper
+
     return decorator
 
 

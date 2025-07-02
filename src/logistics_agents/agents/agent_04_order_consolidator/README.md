@@ -1,6 +1,6 @@
 # Agent 04 - Order Consolidator
 
-**Team Member**: Anagha  
+**Team Member**: Anagha
 **Purpose**: Group orders by supplier and optimize consolidation for cost savings
 
 ## 📁 What's in This Folder
@@ -32,7 +32,7 @@
 - Maps supplier locations for shipping optimization
 - Highlights multi-item consolidation opportunities
 
-**`order_optimizer`**: Calculates financial benefits of consolidation  
+**`order_optimizer`**: Calculates financial benefits of consolidation
 
 - Compares individual vs consolidated shipping costs
 - Applies volume discounts for large orders
@@ -52,11 +52,28 @@
 2. **Test your agent**: `python -m pytest -m agent04`
 3. **Try the sample notebook** (copy from `notebooks/samples/`)
 
+## 📓 Development Workflow
+
+**Follow the iterative development process:**
+
+👉 **[Complete Iteration Guide](../../../Getting_Started/03_Quick_Iteration_Guide.md)** 👈
+
+**Quick workflow:**
+
+1. Copy sample notebook: `cp notebooks/samples/agent01_sample_demo.ipynb notebooks/agent04_anagha_demo.ipynb`
+2. Update imports: `from ...agent_04_order_consolidator.agent import OrderConsolidator`
+3. Make changes to `agent.py` and `tools/` files in VSCode
+4. Run reload cell in notebook: `importlib.reload(agent_module)`
+5. Compare tool inputs/outputs across iterations
+6. Document improvements and lessons learned
+
+The guide shows you how to capture detailed tool inputs/outputs for each iteration!
+
 ## 💡 Ideas for Iterations
 
 **Enhance supplier grouping:**
 
-- Add geographic clustering for shipping efficiency  
+- Add geographic clustering for shipping efficiency
 - Consider supplier lead times and reliability scores
 - Factor in minimum order quantities and discounts
 - Group by product categories or compatibility
@@ -88,7 +105,7 @@ Your agent works with:
 
 - **Agent 01 (Threshold Monitor)** - Gets urgency levels for consolidation prioritization
 - **Agent 02 (Route Computer)** - Coordinates consolidated deliveries with routing
-- **Agent 03 (Restock Calculator)** - Gets quantities to optimize order sizes  
+- **Agent 03 (Restock Calculator)** - Gets quantities to optimize order sizes
 - **Agent 05 (Orchestrator)** - Provides consolidation recommendations for cost optimization
 
 Focus on finding real cost savings through smart ordering! 💰
