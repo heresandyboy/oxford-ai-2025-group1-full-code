@@ -4,6 +4,8 @@
 
 ## 🚀 Quick Start
 
+First copy the `.env.example` file to a new file called `.env` in the same directory and enter your `OPENAI_API_KEY`
+
 1. **Install & Setup**:
 
    ```bash
@@ -41,7 +43,7 @@
 ### 🔍 What Gets Logged
 
 - **Agent Inputs & Outputs**: Every agent execution with full input/output capture
-- **Tool Executions**: All tool calls with context and results  
+- **Tool Executions**: All tool calls with context and results
 - **System Events**: Application start/stop, data loading, errors
 - **Performance Tracking**: Execution timing and success/failure status
 
@@ -60,7 +62,7 @@ logs/logistics_agents_YYYYMMDD_HHMMSS_username.log
 ```bash
 # For COMPLETE output visibility (recommended for development)
 LOG_TRUNCATE_AGENT_INSTRUCTIONS=0
-LOG_TRUNCATE_AGENT_INPUT=0  
+LOG_TRUNCATE_AGENT_INPUT=0
 LOG_TRUNCATE_AGENT_OUTPUT=0
 LOG_TRUNCATE_TOOL_OUTPUT=0
 LOG_TRUNCATE_TOOL_INPUT=0
@@ -279,7 +281,7 @@ python run.py                       # Test full system integration (creates log 
 **Log Entry Types**:
 
 - `AGENT_START`: Agent begins execution
-- `AGENT_CONTEXT`: Shows data being processed  
+- `AGENT_CONTEXT`: Shows data being processed
 - `AGENT_SUCCESS`: Agent completed successfully
 - `AGENT_OUTPUT`: Agent's final output
 - `TOOL_INPUT`: Tool receives input data
