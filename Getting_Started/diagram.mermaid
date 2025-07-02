@@ -1,0 +1,274 @@
+%% =============================================================================
+%% LOGISTICS AGENTS SYSTEM ARCHITECTURE - "Agents as Tools" Pattern
+%% =============================================================================
+
+%% Overall System Architecture
+graph TB
+    subgraph "🏢 Logistics Multi-Agent System"
+        Main["🚀 main.py<br/>Entry Point"] --> Orchestrator["🎯 Agent 05<br/>Orchestrator<br/>(Andy)"]
+        
+        subgraph "🎛️ Orchestrator Tools"
+            OT1["📋 agent_coordinator"]
+            OT2["📊 result_synthesizer"]
+        end
+        
+        subgraph "🔧 Specialist Agents (as Tools)"
+            Agent01["🚨 Agent 01<br/>Threshold Monitor<br/>(Martin)"]
+            Agent02["🗺️ Agent 02<br/>Route Computer<br/>(Rhiannon)"]
+            Agent03["📈 Agent 03<br/>Restock Calculator<br/>(Nathan)"]
+            Agent04["📦 Agent 04<br/>Order Consolidator<br/>(Anagha)"]
+        end
+        
+        Orchestrator --> OT1
+        Orchestrator --> OT2
+        Orchestrator -.->|"as_tool()"| Agent01
+        Orchestrator -.->|"as_tool()"| Agent02
+        Orchestrator -.->|"as_tool()"| Agent03
+        Orchestrator -.->|"as_tool()"| Agent04
+    end
+    
+    subgraph "📊 Data Flow"
+        CSV["📄 Inventory CSV"] --> Context["🏗️ InventoryContext"]
+        Context --> Orchestrator
+    end
+    
+    style Orchestrator fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
+    style Agent01 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Agent02 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Agent03 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style Agent04 fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+
+%% =============================================================================
+%% AGENT 01 - THRESHOLD MONITOR DETAILS
+%% =============================================================================
+
+graph TD
+    subgraph "🚨 Agent 01 - Threshold Monitor (Martin)"
+        A01["🎯 InventoryThresholdMonitor<br/>Class"]
+        
+        subgraph "🔧 Tools"
+            A01T1["⚠️ threshold_checker<br/>Check items below reorder thresholds"]
+            A01T2["🏷️ priority_classifier<br/>Classify urgency (HIGH/MEDIUM/LOW)"]
+        end
+        
+        subgraph "📊 Key Functions"
+            A01F1["📐 calculate_threshold_severity()<br/>Determine CRITICAL/HIGH/MEDIUM/LOW"]
+            A01F2["⏰ estimate_days_to_stockout()<br/>Predict stockout timing"]
+            A01F3["💼 get_business_impact_score()<br/>Calculate business priority"]
+        end
+        
+        A01 --> A01T1
+        A01 --> A01T2
+        A01 --> A01F1
+        A01 --> A01F2
+        A01 --> A01F3
+        
+        A01T1 --> |"Items below threshold"| Output01["📋 Threshold Violations<br/>+ Priority Classifications"]
+        A01T2 --> Output01
+    end
+    
+    subgraph "🔄 Integration"
+        Input01["📊 InventoryContext<br/>Stock levels, reorder points"] --> A01
+        Output01 --> |"Used by"| NextAgents["🎯 Orchestrator<br/>🗺️ Route Computer<br/>📈 Restock Calculator"]
+    end
+    
+    style A01 fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    style Output01 fill:#ffecb3,stroke:#f57c00,stroke-width:2px
+
+%% =============================================================================
+%% AGENT 02 - ROUTE COMPUTER DETAILS
+%% =============================================================================
+
+graph TD
+    subgraph "🗺️ Agent 02 - Route Computer (Rhiannon)"
+        A02["🎯 RouteComputer<br/>Class"]
+        
+        subgraph "🔧 Tools"
+            A02T1["📍 route_calculator<br/>Calculate delivery routes"]
+            A02T2["📅 delivery_scheduler<br/>Create delivery schedules"]
+            A02T3["💻 CodeInterpreterTool<br/>Mathematical calculations"]
+        end
+        
+        subgraph "📊 Capabilities"
+            A02C1["🚛 Route Optimization<br/>Shortest paths & costs"]
+            A02C2["⏰ Schedule Prioritization<br/>Urgent deliveries first"]
+            A02C3["💰 Cost Analysis<br/>Transport cost calculations"]
+        end
+        
+        A02 --> A02T1
+        A02 --> A02T2
+        A02 --> A02T3
+        A02T1 --> A02C1
+        A02T2 --> A02C2
+        A02T3 --> A02C3
+        
+        A02C1 --> Output02["🗺️ Delivery Routes<br/>+ Schedules + Costs"]
+        A02C2 --> Output02
+        A02C3 --> Output02
+    end
+    
+    subgraph "🔄 Integration"
+        Input02["🚨 Threshold Violations<br/>📦 Items needing delivery"] --> A02
+        Output02 --> |"Used by"| NextAgents02["🎯 Orchestrator<br/>📦 Order Consolidator"]
+    end
+    
+    style A02 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style Output02 fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px
+
+%% =============================================================================
+%% AGENT 03 - RESTOCK CALCULATOR DETAILS
+%% =============================================================================
+
+graph TD
+    subgraph "📈 Agent 03 - Restock Calculator (Nathan)"
+        A03["🎯 RestockingCalculator<br/>Class"]
+        
+        subgraph "🔧 Tools"
+            A03T1["📊 demand_forecaster<br/>Analyze demand patterns"]
+            A03T2["📐 quantity_optimizer<br/>Calculate EOQ & reorder quantities"]
+            A03T3["💻 CodeInterpreterTool<br/>Advanced mathematical analysis"]
+        end
+        
+        subgraph "📊 Algorithms"
+            A03A1["📈 Demand Analysis<br/>Historical patterns & trends"]
+            A03A2["🎯 EOQ Calculation<br/>Economic Order Quantity"]
+            A03A3["💰 Cost Optimization<br/>Holding vs ordering costs"]
+        end
+        
+        A03 --> A03T1
+        A03 --> A03T2
+        A03 --> A03T3
+        A03T1 --> A03A1
+        A03T2 --> A03A2
+        A03T3 --> A03A3
+        
+        A03A1 --> Output03["📋 Reorder Quantities<br/>+ Costs + Timing"]
+        A03A2 --> Output03
+        A03A3 --> Output03
+    end
+    
+    subgraph "🔄 Integration"
+        Input03["🚨 Priority Items<br/>📊 Historical demand data"] --> A03
+        Output03 --> |"Used by"| NextAgents03["🎯 Orchestrator<br/>📦 Order Consolidator"]
+    end
+    
+    style A03 fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    style Output03 fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+
+%% =============================================================================
+%% AGENT 04 - ORDER CONSOLIDATOR DETAILS
+%% =============================================================================
+
+graph TD
+    subgraph "📦 Agent 04 - Order Consolidator (Anagha)"
+        A04["🎯 OrderConsolidator<br/>Class"]
+        
+        subgraph "🔧 Tools"
+            A04T1["🏪 supplier_matcher<br/>Group orders by supplier"]
+            A04T2["💰 order_optimizer<br/>Calculate consolidation savings"]
+            A04T3["🌐 WebSearchTool<br/>Research supplier info & rates"]
+        end
+        
+        subgraph "📊 Optimization"
+            A04O1["📋 Order Grouping<br/>Combine multiple items per supplier"]
+            A04O2["💵 Cost Savings<br/>Bulk order discounts & shipping"]
+            A04O3["📈 Efficiency Gains<br/>Reduced administrative overhead"]
+        end
+        
+        A04 --> A04T1
+        A04 --> A04T2
+        A04 --> A04T3
+        A04T1 --> A04O1
+        A04T2 --> A04O2
+        A04T3 --> A04O3
+        
+        A04O1 --> Output04["📦 Consolidated Orders<br/>+ Savings + Efficiency"]
+        A04O2 --> Output04
+        A04O3 --> Output04
+    end
+    
+    subgraph "🔄 Integration"
+        Input04["📋 Reorder Quantities<br/>🗺️ Delivery Routes"] --> A04
+        Output04 --> |"Used by"| NextAgents04["🎯 Orchestrator<br/>📊 Final Recommendations"]
+    end
+    
+    style A04 fill:#fce4ec,stroke:#c2185b,stroke-width:3px
+    style Output04 fill:#f8bbd9,stroke:#c2185b,stroke-width:2px
+
+%% =============================================================================
+%% AGENT 05 - ORCHESTRATOR WORKFLOW
+%% =============================================================================
+
+graph TD
+    subgraph "🎯 Agent 05 - Orchestrator Workflow (Andy)"
+        Start["🚀 Start Analysis"] --> Coord["📋 coordinate_workflow_steps<br/>Plan execution sequence"]
+        
+        Coord --> Step1["1️⃣ Call InventoryThresholdMonitor<br/>Identify urgent items"]
+        Step1 --> Step2["2️⃣ Call RestockingCalculator<br/>Calculate optimal quantities"]
+        Step2 --> Step3["3️⃣ Call RouteComputer<br/>Plan delivery routes"]
+        Step3 --> Step4["4️⃣ Call OrderConsolidator<br/>Optimize order grouping"]
+        Step4 --> Synth["📊 create_executive_summary<br/>Synthesize all results"]
+        
+        Synth --> Final["📋 Final Recommendations<br/>Comprehensive logistics plan"]
+    end
+    
+    subgraph "🔄 Agents as Tools Pattern"
+        AgentTools["🔧 Specialist Agents Available as Tools"]
+        AgentTools --> T1["🚨 InventoryThresholdMonitor.as_tool()"]
+        AgentTools --> T2["🗺️ RouteComputer.as_tool()"]
+        AgentTools --> T3["📈 RestockingCalculator.as_tool()"]
+        AgentTools --> T4["📦 OrderConsolidator.as_tool()"]
+    end
+    
+    Step1 -.-> T1
+    Step2 -.-> T3
+    Step3 -.-> T2
+    Step4 -.-> T4
+    
+    style Start fill:#e1f5fe,stroke:#0277bd,stroke-width:3px
+    style Final fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    style Coord fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Synth fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+
+%% =============================================================================
+%% DATA FLOW SEQUENCE
+%% =============================================================================
+
+sequenceDiagram
+    participant CSV as 📄 CSV Data
+    participant Main as 🚀 main.py
+    participant Orch as 🎯 Orchestrator
+    participant A01 as 🚨 Agent 01<br/>Threshold
+    participant A03 as 📈 Agent 03<br/>Restock Calc
+    participant A02 as 🗺️ Agent 02<br/>Route Comp
+    participant A04 as 📦 Agent 04<br/>Consolidator
+    
+    CSV->>Main: Load inventory data
+    Main->>Orch: InventoryContext
+    
+    Note over Orch: 📋 coordinate_workflow_steps
+    
+    Orch->>A01: Analyze thresholds
+    A01->>A01: threshold_checker
+    A01->>A01: priority_classifier
+    A01->>Orch: Priority items + urgency
+    
+    Orch->>A03: Calculate quantities
+    A03->>A03: demand_forecaster
+    A03->>A03: quantity_optimizer
+    A03->>Orch: Optimal quantities + costs
+    
+    Orch->>A02: Plan routes
+    A02->>A02: route_calculator
+    A02->>A02: delivery_scheduler
+    A02->>Orch: Routes + schedules
+    
+    Orch->>A04: Consolidate orders
+    A04->>A04: supplier_matcher
+    A04->>A04: order_optimizer
+    A04->>Orch: Consolidated orders + savings
+    
+    Note over Orch: 📊 create_executive_summary
+    
+    Orch->>Main: Final recommendations
+    Main->>Main: 📋 Display results

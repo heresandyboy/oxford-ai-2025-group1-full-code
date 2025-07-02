@@ -1,0 +1,85 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "logistics-agents"
+version = "0.1.0"
+description = "Oxford AI Summit 2025 - Logistics Multi-Agent System"
+authors = [
+    {name = "Team Logistics", email = "team@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openai-agents>=0.1.0",
+    "pydantic>=2.11.0",
+    "pandas>=2.3.0",
+    "numpy>=2.3.1",
+    "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
+    "click>=8.2.0",
+    "asyncio-throttle>=1.0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=1.0.0",
+    "pytest-cov>=6.2.1",
+    "black>=24.1.0",
+    "ruff>=0.0.284",
+    "mypy>=1.5.0",
+    "pre-commit>=3.3.0",
+]
+notebooks = [
+    "jupyter>=1.1.1",
+    "jupyterlab>=4.3.0",
+    "ipykernel>=6.29.0",
+    "matplotlib>=3.9.0",
+    "seaborn>=0.13.0",
+]
+all = [
+    "logistics-agents[dev,notebooks]"
+]
+
+[project.urls]
+Homepage = "https://github.com/team/logistics-agents"
+Repository = "https://github.com/team/logistics-agents"
+
+[project.scripts]
+logistics-agents = "src.logistics_agents.main:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = [
+    "src/logistics_agents/agents/agent_01_threshold_monitor/tests",
+    "src/logistics_agents/agents/agent_02_route_computer/tests", 
+    "src/logistics_agents/agents/agent_03_restock_calculator/tests",
+    "src/logistics_agents/agents/agent_04_order_consolidator/tests",
+    "src/logistics_agents/agents/agent_05_orchestrator/tests"
+]
+addopts = "--cov=src/logistics_agents --cov-report=html --cov-report=term -v"
+markers = [
+    "agent01: Agent 01 Threshold Monitor tests",
+    "agent02: Agent 02 Route Computer tests", 
+    "agent03: Agent 03 Restock Calculator tests",
+    "agent04: Agent 04 Order Consolidator tests",
+    "agent05: Agent 05 Orchestrator tests",
+    "integration: Integration tests across agents",
+    "expensive: Expensive tests that use multiple agents and consume more API credits"
+]
