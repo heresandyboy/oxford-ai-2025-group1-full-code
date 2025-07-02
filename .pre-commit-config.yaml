@@ -1,6 +1,9 @@
 # PRE-COMMIT HOOKS DISABLED FOR SAMPLE PROJECT
-# Uncomment when ready for production-level code quality enforcement
+# This is a valid empty configuration that won't run any hooks
+# Uncomment the repos section below when ready for production-level code quality enforcement
 
+repos: []
+# PRODUCTION HOOKS (COMMENTED OUT):
 # repos:
 #   # Standard hooks for file formatting
 #   - repo: https://github.com/pre-commit/pre-commit-hooks

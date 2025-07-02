@@ -51,9 +51,9 @@ EOF
     echo "⚠️  Please edit .env file with your OpenAI API key"
 fi
 
-# Install pre-commit hooks
-echo "Setting up pre-commit hooks..."
-pre-commit install
+# Install pre-commit hooks (DISABLED for sample project)
+echo "Skipping pre-commit hooks setup..."
+# pre-commit install
 
 echo "✅ Setup complete!"
 echo ""
