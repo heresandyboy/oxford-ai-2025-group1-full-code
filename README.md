@@ -21,7 +21,7 @@
 
    **Why?** Virtual environment isolates project dependencies from your system Python.
 
-   **Check you're in venv**: Command prompt shows `(2025_Capstone_AIproject)` prefix
+   **Check you're in venv**: Command prompt shows `(oxford-ai-2025-group1-full-code)` prefix
 
    **To exit venv**: `deactivate` (when done working)
 
@@ -163,7 +163,7 @@ grep "TOOL_OUTPUT" logs/logistics_agents_*.log | tail -10
 ## 📁 Project Structure
 
 ```
-2025_Capstone_AIproject/
+oxford-ai-2025-group1-full-code/
 ├── Getting_Started/
 │   └── 01_Course_Guide.md              # Course requirements & guidelines
 ├── notebooks/
